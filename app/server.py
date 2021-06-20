@@ -2,7 +2,7 @@ import aiohttp
 import asyncio
 import uvicorn
 from fastai.vision.all import *
-from fastai import learner
+import pathlib
 from fastai import *
 from fastai.vision import *
 from io import BytesIO
@@ -19,7 +19,29 @@ path = Path(__file__).parent
 
 app = Starlette()
 app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_headers=['X-Requested-With', 'Content-Type'])
-app.mount('/static', StaticFiles(directory='app/static'))
+app.mount('/static', StaticFiles(directory='static'))
+
+
+def yer(filename):
+    if filename.name[0:2] == "ca":  # cardboard
+        return "cardboard"
+    if filename.name[0:2] == "gl":  # glass
+        return "glass"
+    if filename.name[0:2] == "me":  # metal
+        return "metal"
+    if filename.name[0:2] == "pa":  # paper
+        return "paper"
+    if filename.name[0:2] == "pl":  # plastic
+        return "plastic"
+    if filename.name[0:2] == "tr":  # trash
+        return "trash"
+
+
+def read_model(model_file):
+    temp = pathlib.PosixPath
+    pathlib.PosixPath = pathlib.WindowsPath
+    learn = load_learner(model_file)
+    return learn
 
 
 async def download_file(url, dest):
@@ -34,7 +56,7 @@ async def download_file(url, dest):
 async def setup_learner():
     await download_file(export_file_url, path / export_file_name)
     try:
-        learn = load_learner(path, export_file_name)
+        learn = read_model(export_file_name)
         return learn
     except RuntimeError as e:
         if len(e.args) > 0 and 'CPU-only machine' in e.args[0]:
