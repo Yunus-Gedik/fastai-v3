@@ -2,6 +2,7 @@ import aiohttp
 import asyncio
 import uvicorn
 from fastai.vision.all import *
+from fastai import learner
 from fastai import *
 from fastai.vision import *
 from io import BytesIO
