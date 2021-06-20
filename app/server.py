@@ -38,8 +38,8 @@ def yer(filename):
 
 
 def read_model(model_file):
-    temp = pathlib.PosixPath
-    pathlib.PosixPath = pathlib.WindowsPath
+    temp = pathlib.WindowsPath
+    pathlib.WindowsPath = pathlib.PosixPath
     learn = load_learner(model_file)
     return learn
 
